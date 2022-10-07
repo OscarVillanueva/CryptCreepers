@@ -6,6 +6,9 @@ public class BulletManager : MonoBehaviour
 {
 
     [SerializeField] float speed = 5;
+    [SerializeField] int health = 3;
+
+    public bool isPowerShot = false;
 
     private void Start()
     {
@@ -22,9 +25,15 @@ public class BulletManager : MonoBehaviour
     {
         // Decimos al enemigo que redusca su vida.
         if (collision.CompareTag("Enemy"))
+        {
             collision.GetComponent<EnemyManager>().TakeDamage();
 
-        Destroy(gameObject);
+        }
+
+        health = health - 1;
+
+        if (!isPowerShot || health <= 0)
+            Destroy(gameObject);
 
     }
 }

@@ -6,18 +6,21 @@ public class PlayerManager : MonoBehaviour
 {
     // Public solo puede ser accedido desde cualquier lugar
     // [SerializeField] solo accedido desde el inspector
-    [SerializeField] float speed = 3;
     [SerializeField] Transform aim;
     [SerializeField] Camera mainCamera;
     [SerializeField] Transform bulletPrefab;
     [SerializeField] float fireRate = 1;
+    [SerializeField] float speed = 3;
+    [SerializeField] int invulnerabilityTime = 3;
 
-    //private int health = 10;
+    private int health = 10;
     private float horizontal;
     private float vertical;
     private Vector3 moveDirection;
     private Vector2 facingDirection;
     private bool isGunLoaded = true;
+    private bool isPowerShotActive = false;
+    [SerializeField] bool isInvulnerable = false;
 
     // Update is called once per frame
     void Update()
@@ -60,11 +63,42 @@ public class PlayerManager : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.collider.CompareTag("Enemy"))
+        if (collision.collider.CompareTag("Enemy") && !isInvulnerable)
         {
+            health = health - 1;
+
+            if (health <= 0)
              Destroy(gameObject);
+            else
+            {
+                isInvulnerable = true;
+                StartCoroutine(MakeInvulnerability());
+
+            }
         }
+        
     }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("PowerUp"))
+        {
+            switch (collision.GetComponent<PowerUpManager>().powerUpType)
+            {
+                case PowerUpManager.PowerUpType.FireRateIncrease:
+                    fireRate = fireRate + 1;
+                    break;
+
+                case PowerUpManager.PowerUpType.PowerShot:
+                    isPowerShotActive = true;
+                    break;
+            }
+
+        }
+
+        Destroy(collision.gameObject, 0.1f);
+    }
+
 
     private void Shoot()
     {
@@ -78,7 +112,9 @@ public class PlayerManager : MonoBehaviour
         Quaternion targetRotation = Quaternion.AngleAxis(angle, Vector3.forward);
 
         // Creamos la bala
-        Instantiate(bulletPrefab, aim.position, targetRotation);
+        Transform bulletClone = Instantiate(bulletPrefab, aim.position, targetRotation);
+
+        bulletClone.GetComponent<BulletManager>().isPowerShot = isPowerShotActive;
 
         StartCoroutine(ReloadGun());
     }
@@ -88,5 +124,11 @@ public class PlayerManager : MonoBehaviour
     {
         yield return new WaitForSeconds(1/fireRate);
         isGunLoaded = true;
+    }
+
+    IEnumerator MakeInvulnerability()
+    {
+        yield return new WaitForSeconds(invulnerabilityTime);
+        isInvulnerable = false;
     }
 }

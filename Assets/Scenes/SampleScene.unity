@@ -608,7 +608,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   checkpointPrefab: {fileID: 6155079387458863994, guid: c4678139cbb435c48aed9c5c02763159, type: 3}
-  checkpointSpawnDelay: 8
+  powerUpPrefab:
+  - {fileID: 7196172935583584717, guid: 6d9c82016877bd84995d602630e74ec6, type: 3}
+  - {fileID: 7196172935583584717, guid: 94ae28c88b249ac49aa7f80908b6e58f, type: 3}
+  checkpointSpawnDelay: 10
+  powerUpSpawnDelay: 12
   spawnRadius: 10
 --- !u!4 &740084804
 Transform:
