@@ -13,7 +13,13 @@ public class EnemyManager : MonoBehaviour
     private void Start()
     {
         // Buscamos al jugador de manera dinamica
-        player = FindObjectOfType<PlayerManager>().transform;
+        PlayerManager manager = FindObjectOfType<PlayerManager>();
+        if (manager) player = manager.transform;
+
+        GameObject[] spawnPoints = GameObject.FindGameObjectsWithTag("SpawPoint");
+        int randowSpawnPoint = Random.Range(0, spawnPoints.Length);
+        transform.position = spawnPoints[randowSpawnPoint].transform.position;
+        
     }
 
     private void Update()
@@ -33,7 +39,7 @@ public class EnemyManager : MonoBehaviour
     {
         health = health - 1;
 
-        if (health >= 0) Destroy(gameObject);
+        if (health <= 0) Destroy(gameObject);
     }
 
 }

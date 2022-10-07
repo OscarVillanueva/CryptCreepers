@@ -12,7 +12,7 @@ public class PlayerManager : MonoBehaviour
     [SerializeField] Transform bulletPrefab;
     [SerializeField] float fireRate = 1;
 
-    private int health = 10;
+    //private int health = 10;
     private float horizontal;
     private float vertical;
     private Vector3 moveDirection;
@@ -52,6 +52,7 @@ public class PlayerManager : MonoBehaviour
         // Saca un punto de pantalla a espacio del mundo, pasar la posición del mouse/puntero al mundo
         // le restamos la dirección del mouse para moverlo de lugar <- aim p, p aim ->
         facingDirection = mainCamera.ScreenToWorldPoint(Input.mousePosition) - transform.position;
+
         //aim.position = transform.position + (Vector3)facingDirection.normalized;
         aim.position = transform.position + new Vector3(facingDirection.normalized.x, facingDirection.normalized.y, -0.01f);
 
@@ -61,9 +62,7 @@ public class PlayerManager : MonoBehaviour
     {
         if (collision.collider.CompareTag("Enemy"))
         {
-            health = health - 1;
-
-            if (health <= 0) Destroy(gameObject);
+             Destroy(gameObject);
         }
     }
 
