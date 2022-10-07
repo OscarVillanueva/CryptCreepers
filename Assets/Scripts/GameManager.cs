@@ -6,8 +6,22 @@ public class GameManager : MonoBehaviour
 {
     // Hacemos un singleton del GameManger
     public static GameManager Instance;
+
     public int time = 30;
     public int difficulty = 1;
+
+    [SerializeField] int score; 
+
+    // Hacemos por medio de setters y getters
+    public int Score
+    {
+        get => score;
+        set
+        {
+            score = value;
+            if (score % 1000 == 0) difficulty = difficulty + 1;
+        }
+    }
 
     private void Awake()
     {

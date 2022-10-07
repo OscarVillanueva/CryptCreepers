@@ -13,14 +13,14 @@ public class PlayerManager : MonoBehaviour
     [SerializeField] float speed = 3;
     [SerializeField] int invulnerabilityTime = 3;
 
+    private Vector3 moveDirection;
+    private Vector2 facingDirection;
     private int health = 10;
     private float horizontal;
     private float vertical;
-    private Vector3 moveDirection;
-    private Vector2 facingDirection;
     private bool isGunLoaded = true;
     private bool isPowerShotActive = false;
-    [SerializeField] bool isInvulnerable = false;
+    private bool isInvulnerable = false;
 
     // Update is called once per frame
     void Update()
@@ -72,7 +72,7 @@ public class PlayerManager : MonoBehaviour
             else
             {
                 isInvulnerable = true;
-                StartCoroutine(MakeInvulnerability());
+                StartCoroutine(MakeVulnerableAgain());
 
             }
         }
@@ -126,7 +126,7 @@ public class PlayerManager : MonoBehaviour
         isGunLoaded = true;
     }
 
-    IEnumerator MakeInvulnerability()
+    IEnumerator MakeVulnerableAgain()
     {
         yield return new WaitForSeconds(invulnerabilityTime);
         isInvulnerable = false;

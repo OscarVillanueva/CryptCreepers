@@ -7,6 +7,7 @@ public class EnemyManager : MonoBehaviour
 
     [SerializeField] int health = 1;
     [SerializeField] float speed = 1;
+    [SerializeField] int points = 100;
 
     private Transform player;
 
@@ -39,7 +40,11 @@ public class EnemyManager : MonoBehaviour
     {
         health = health - 1;
 
-        if (health <= 0) Destroy(gameObject);
+        if (health <= 0)
+        {
+            GameManager.Instance.Score = GameManager.Instance.Score + points;
+            Destroy(gameObject);
+        }
     }
 
 }
