@@ -10,8 +10,9 @@ public class PlayerManager : MonoBehaviour
     [SerializeField] Camera mainCamera;
     [SerializeField] Transform bulletPrefab;
     [SerializeField] float fireRate = 1;
-    [SerializeField] float speed = 3;
     [SerializeField] int invulnerabilityTime = 3;
+
+    public float speed = 3;
 
     private Vector3 moveDirection;
     private Vector2 facingDirection;
@@ -81,6 +82,7 @@ public class PlayerManager : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
+
         if (collision.CompareTag("PowerUp"))
         {
             switch (collision.GetComponent<PowerUpManager>().powerUpType)
@@ -94,9 +96,10 @@ public class PlayerManager : MonoBehaviour
                     break;
             }
 
+            Destroy(collision.gameObject, 0.1f);
+
         }
 
-        Destroy(collision.gameObject, 0.1f);
     }
 
 

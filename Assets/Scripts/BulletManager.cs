@@ -23,6 +23,12 @@ public class BulletManager : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
+
+        if (collision.CompareTag("WaterTrap"))
+        {
+            return;
+        }
+
         // Decimos al enemigo que redusca su vida.
         if (collision.CompareTag("Enemy"))
         {

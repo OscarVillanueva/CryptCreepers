@@ -7,6 +7,7 @@ TagManager:
   - Enemy
   - SpawPoint
   - PowerUp
+  - WaterTrap
   layers:
   - Default
   - TransparentFX
