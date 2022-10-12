@@ -21,7 +21,7 @@ public class ItemSpawner : MonoBehaviour
 
     IEnumerator SpawnCheckpointRoutine()
     {
-        while (true)
+        while (!GameManager.Instance.gameOver)
         {
             yield return new WaitForSeconds(checkpointSpawnDelay);
 
@@ -34,8 +34,9 @@ public class ItemSpawner : MonoBehaviour
 
     IEnumerator SpawnPowerUpRoutine()
     {
-        while (true)
+        while (!GameManager.Instance.gameOver)
         {
+
             yield return new WaitForSeconds(powerUpSpawnDelay);
             Vector2 randomPosition = Random.insideUnitCircle * spawnRadius;
 

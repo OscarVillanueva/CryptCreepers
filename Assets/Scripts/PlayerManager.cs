@@ -9,23 +9,48 @@ public class PlayerManager : MonoBehaviour
     [SerializeField] Transform aim;
     [SerializeField] Camera mainCamera;
     [SerializeField] Transform bulletPrefab;
+    [SerializeField] Animator animator;
+    [SerializeField] SpriteRenderer spriteRenderer;
     [SerializeField] float fireRate = 1;
     [SerializeField] int invulnerabilityTime = 3;
+    [SerializeField] float blinkRate = 1;
+    [SerializeField] AudioClip impactClip;
+    [SerializeField] AudioClip powerUpClip;
 
     public float speed = 3;
 
     private Vector3 moveDirection;
     private Vector2 facingDirection;
-    private int health = 10;
+
+    private CameraController cameraController;
+
+    private int health = 3;
     private float horizontal;
     private float vertical;
     private bool isGunLoaded = true;
     private bool isPowerShotActive = false;
     private bool isInvulnerable = false;
 
+    public int Health
+    {
+        get => health;
+        set {
+            health = value;
+            UIManager.Instance.UpdateUIHealth(health);
+        }
+    }
+
+    private void Start()
+    {
+        UIManager.Instance.UpdateUIHealth(Health);
+        cameraController = FindObjectOfType<CameraController>();
+    }
+
     // Update is called once per frame
     void Update()
     {
+
+        if (GameManager.Instance.gameOver) return;
 
         MovePlayer();
         MoveAim();
@@ -35,7 +60,7 @@ public class PlayerManager : MonoBehaviour
         {
             Shoot();
         }
-    } 
+    }
 
 
     private void MovePlayer()
@@ -49,6 +74,14 @@ public class PlayerManager : MonoBehaviour
         // Time.deltaTime es el tiempo que tarda en procesar entre frame y frame, varia entre las capacidades
         // entre más rápida la pc más pequeño el delta
         transform.position = transform.position + moveDirection * Time.deltaTime * speed;
+
+        animator.SetFloat("speed", moveDirection.magnitude);
+
+        if (aim.position.x > transform.position.x) spriteRenderer.flipX = true;
+        else {
+            if (aim.position.x < transform.position.x) spriteRenderer.flipX = false;
+        }
+
     }
 
     private void MoveAim()
@@ -57,8 +90,7 @@ public class PlayerManager : MonoBehaviour
         // le restamos la dirección del mouse para moverlo de lugar <- aim p, p aim ->
         facingDirection = mainCamera.ScreenToWorldPoint(Input.mousePosition) - transform.position;
 
-        //aim.position = transform.position + (Vector3)facingDirection.normalized;
-        aim.position = transform.position + new Vector3(facingDirection.normalized.x, facingDirection.normalized.y, -0.01f);
+        aim.position = transform.position + (Vector3)facingDirection.normalized * 1.5f;
 
     }
 
@@ -66,18 +98,25 @@ public class PlayerManager : MonoBehaviour
     {
         if (collision.collider.CompareTag("Enemy") && !isInvulnerable)
         {
-            health = health - 1;
+            AudioSource.PlayClipAtPoint(impactClip, transform.position);
 
-            if (health <= 0)
-             Destroy(gameObject);
+            Health = Health - 1;
+
+            if (Health <= 0)
+            {
+                GameManager.Instance.gameOver = true;
+                UIManager.Instance.ShowGameOverScreen();
+                Destroy(gameObject, 0.1f);
+            }
             else
             {
                 isInvulnerable = true;
+                cameraController.Shake();
                 StartCoroutine(MakeVulnerableAgain());
 
             }
         }
-        
+
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -85,6 +124,9 @@ public class PlayerManager : MonoBehaviour
 
         if (collision.CompareTag("PowerUp"))
         {
+
+            AudioSource.PlayClipAtPoint(powerUpClip, transform.position);
+
             switch (collision.GetComponent<PowerUpManager>().powerUpType)
             {
                 case PowerUpManager.PowerUpType.FireRateIncrease:
@@ -125,13 +167,32 @@ public class PlayerManager : MonoBehaviour
     // Despues de un segundo volvemos a dejar disparar
     IEnumerator ReloadGun()
     {
-        yield return new WaitForSeconds(1/fireRate);
+        yield return new WaitForSeconds(1 / fireRate);
         isGunLoaded = true;
     }
 
     IEnumerator MakeVulnerableAgain()
     {
+
+        StartCoroutine(BlinkAfterHit());
+
         yield return new WaitForSeconds(invulnerabilityTime);
         isInvulnerable = false;
+    }
+
+    IEnumerator BlinkAfterHit()
+    {
+
+        int times = 10;
+
+        while (times > 0)
+        {
+            spriteRenderer.enabled = false;
+            yield return new WaitForSeconds(times * blinkRate);
+            spriteRenderer.enabled = true;
+            yield return new WaitForSeconds(times * blinkRate);
+
+            times = times - 1;
+        }
     }
 }

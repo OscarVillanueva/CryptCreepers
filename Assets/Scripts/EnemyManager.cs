@@ -8,6 +8,7 @@ public class EnemyManager : MonoBehaviour
     [SerializeField] int health = 1;
     [SerializeField] float speed = 1;
     [SerializeField] int points = 100;
+    [SerializeField] AudioClip impactClip;
 
     private Transform player;
 
@@ -31,6 +32,9 @@ public class EnemyManager : MonoBehaviour
         // Obtenemos la dirección hacia el player
         Vector2 direction = player.position - transform.position;
 
+        if (direction.x < 0.0f) transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
+        else if (direction.x >= 0.0f) transform.localScale = new Vector3(-1.0f, 1.0f, 1.0f);
+
         // Movemos el enemigo
         transform.position = transform.position + (Vector3)direction.normalized * Time.deltaTime * speed;
 
@@ -38,12 +42,14 @@ public class EnemyManager : MonoBehaviour
 
     public void TakeDamage()
     {
+        AudioSource.PlayClipAtPoint(impactClip, transform.position);
+
         health = health - 1;
 
         if (health <= 0)
         {
             GameManager.Instance.Score = GameManager.Instance.Score + points;
-            Destroy(gameObject);
+            Destroy(gameObject, 0.1f);
         }
     }
 

@@ -16,7 +16,7 @@ public class EnemySpawnController : MonoBehaviour
 
     IEnumerator SpawnNewEnemy()
     {
-        while(true)
+        while(!GameManager.Instance.gameOver)
         {
             yield return new WaitForSeconds(1/spawnRate);
 

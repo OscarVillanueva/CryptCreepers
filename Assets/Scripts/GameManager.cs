@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -10,7 +11,9 @@ public class GameManager : MonoBehaviour
     public int time = 30;
     public int difficulty = 1;
 
-    [SerializeField] int score; 
+    public bool gameOver = false;
+
+    [SerializeField] int score;
 
     // Hacemos por medio de setters y getters
     public int Score
@@ -19,6 +22,9 @@ public class GameManager : MonoBehaviour
         set
         {
             score = value;
+
+            UIManager.Instance.UpdateUIScore(score);
+
             if (score % 1000 == 0) difficulty = difficulty + 1;
         }
     }
@@ -28,20 +34,40 @@ public class GameManager : MonoBehaviour
         if (Instance == null) Instance = this;
     }
 
+    private void Update()
+    {
+        if (gameOver) Time.timeScale = 0.0f;
+    }
+
     private void Start()
     {
+        UIManager.Instance.UpdateUITime(time);
+        UIManager.Instance.UpdateUIScore(Score);
         StartCoroutine(CountDownRoutine());
+    }
+
+    public void PlayAgain()
+    {
+
+        StartCoroutine(Delay());
+        SceneManager.LoadScene("Game");
     }
 
     IEnumerator CountDownRoutine()
     {
-        while ( time > 0)
+        while (time > 0 && !gameOver)
         {
             yield return new WaitForSeconds(1);
             time = time - 1;
+            UIManager.Instance.UpdateUITime(time);
         }
 
-        // Game over
+        gameOver = true;
+        UIManager.Instance.ShowGameOverScreen();
     }
 
+    IEnumerator Delay()
+    {
+        yield return new WaitForSeconds(1.5f);
+    }
 }

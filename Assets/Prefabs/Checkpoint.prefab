@@ -99,6 +99,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   addedTime: 10
+  powerUpClip: {fileID: 8300000, guid: d8a5b82168e1f384ba245d490355197c, type: 3}
 --- !u!58 &6155079387458863997
 CircleCollider2D:
   m_ObjectHideFlags: 0
