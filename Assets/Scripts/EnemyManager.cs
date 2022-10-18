@@ -35,7 +35,7 @@ public class EnemyManager : MonoBehaviour
         if (direction.x < 0.0f) transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
         else if (direction.x >= 0.0f) transform.localScale = new Vector3(-1.0f, 1.0f, 1.0f);
 
-        // Movemos el enemigo
+        // Movemos el enemigo, normalizamos para que la magnitud del vector siempre sea la misma
         transform.position = transform.position + (Vector3)direction.normalized * Time.deltaTime * speed;
 
     }

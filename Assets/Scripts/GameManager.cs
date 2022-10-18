@@ -14,6 +14,7 @@ public class GameManager : MonoBehaviour
     public bool gameOver = false;
 
     [SerializeField] int score;
+    [SerializeField] AudioClip buttonClip;
 
     // Hacemos por medio de setters y getters
     public int Score
@@ -34,11 +35,6 @@ public class GameManager : MonoBehaviour
         if (Instance == null) Instance = this;
     }
 
-    private void Update()
-    {
-        if (gameOver) Time.timeScale = 0.0f;
-    }
-
     private void Start()
     {
         UIManager.Instance.UpdateUITime(time);
@@ -48,8 +44,12 @@ public class GameManager : MonoBehaviour
 
     public void PlayAgain()
     {
+        AudioSource.PlayClipAtPoint(buttonClip, transform.position);
+        Invoke(nameof(ReloadScene), 0.5f);
+    }
 
-        StartCoroutine(Delay());
+    private void ReloadScene()
+    {
         SceneManager.LoadScene("Game");
     }
 
@@ -66,8 +66,4 @@ public class GameManager : MonoBehaviour
         UIManager.Instance.ShowGameOverScreen();
     }
 
-    IEnumerator Delay()
-    {
-        yield return new WaitForSeconds(1.5f);
-    }
 }

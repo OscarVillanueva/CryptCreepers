@@ -11,11 +11,11 @@ public class PlayerManager : MonoBehaviour
     [SerializeField] Transform bulletPrefab;
     [SerializeField] Animator animator;
     [SerializeField] SpriteRenderer spriteRenderer;
+    [SerializeField] AudioClip impactClip;
+    [SerializeField] AudioClip powerUpClip;
     [SerializeField] float fireRate = 1;
     [SerializeField] int invulnerabilityTime = 3;
     [SerializeField] float blinkRate = 1;
-    [SerializeField] AudioClip impactClip;
-    [SerializeField] AudioClip powerUpClip;
 
     public float speed = 3;
 
@@ -65,23 +65,35 @@ public class PlayerManager : MonoBehaviour
 
     private void MovePlayer()
     {
-        horizontal = Input.GetAxis("Horizontal");
-        vertical = Input.GetAxis("Vertical");
 
-        moveDirection.x = horizontal;
-        moveDirection.y = vertical;
+        ReadInput();
 
         // Time.deltaTime es el tiempo que tarda en procesar entre frame y frame, varia entre las capacidades
         // entre más rápida la pc más pequeño el delta
         transform.position = transform.position + moveDirection * Time.deltaTime * speed;
 
+        UpdatePlayerGraphics();
+
+    }
+
+    private void ReadInput()
+    {
+        horizontal = Input.GetAxis("Horizontal");
+        vertical = Input.GetAxis("Vertical");
+
+        moveDirection.x = horizontal;
+        moveDirection.y = vertical;
+    }
+
+    private void UpdatePlayerGraphics()
+    {
         animator.SetFloat("speed", moveDirection.magnitude);
 
         if (aim.position.x > transform.position.x) spriteRenderer.flipX = true;
-        else {
+        else
+        {
             if (aim.position.x < transform.position.x) spriteRenderer.flipX = false;
         }
-
     }
 
     private void MoveAim()
@@ -110,7 +122,9 @@ public class PlayerManager : MonoBehaviour
             }
             else
             {
+                fireRate = 1;
                 isInvulnerable = true;
+                isPowerShotActive = false;
                 cameraController.Shake();
                 StartCoroutine(MakeVulnerableAgain());
 
@@ -195,4 +209,5 @@ public class PlayerManager : MonoBehaviour
             times = times - 1;
         }
     }
+
 }

@@ -6,7 +6,7 @@ public class EnemySpawnController : MonoBehaviour
 {
 
     [SerializeField] GameObject[] enemyPreFab;
-    [Range(1, 10)][SerializeField] float spawnRate = 1;
+    [Range(0.1f, 10f)][SerializeField] float spawnRate = 1;
 
 
     void Start()

@@ -52,8 +52,6 @@ public class UIManager : MonoBehaviour
 
         gameOverScreen.SetActive(true);
 
-        Destroy(scoreScreen.gameObject);
-
         finalScore.text = GameManager.Instance.Score + "";
     }
 }
